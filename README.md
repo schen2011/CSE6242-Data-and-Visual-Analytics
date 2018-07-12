@@ -1,5 +1,5 @@
 # CSE6242-Data-and-Visual-Analytics
-Assignments and project as part of CSE 6242 at GeorgiaTech under Dr. Duen Horng (Polo) Chau
+Assignments and project as part of CSE 6242 at GeorgiaTech under Dr. Duen Horng (Polo) Chau in Fall 2017
 
 
 ## Course links
