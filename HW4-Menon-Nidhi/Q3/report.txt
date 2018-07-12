@@ -1,0 +1,164 @@
+Section A
+
+1. Random Forest
+
+Parameters: -P 100 -I 100 -num-slots 1 -K 0 -M 1.0 -V 0.001 -S 1
+Running Time: 0.32 seconds
+Confusion Matrix:
+
+   a   b   <-- classified as
+ 316  41 |   a = 0
+  46 250 |   b = 1
+  
+Prediction Accuracy: 86.6769 %
+
+2. Logistic Regression
+
+Parameters: -R 1.0E-8 -M -1 -num-decimal-places 4
+Running Time: 0.16 seconds
+Confusion Matrix:
+
+   a   b   <-- classified as
+ 302  55 |   a = 0
+  34 262 |   b = 1
+  
+Prediction Accuracy: 86.3706 %
+
+3. Multi-layer Perceptron
+
+Parameters: -L 0.3 -M 0.2 -N 500 -V 0 -S 0 -E 20 -H a
+Running Time: 8.24 seconds
+Confusion Matrix:
+
+   a   b   <-- classified as
+ 298  59 |   a = 0
+  50 246 |   b = 1
+  
+Prediction Accuracy: 83.3078 %
+
+4. SVM
+
+Parameters: -F 0 -L 0.01 -R 1.0E-4 -E 500 -C 0.001 -S 1
+Running Time: 0.15 seconds
+Confusion Matrix:
+
+   a   b   <-- classified as
+ 286  71 |   a = 0
+  21 275 |   b = 1
+  
+Prediction Accuracy: 85.9112 %
+
+5. AdaBoostM1
+
+Parameters: -P 100 -S 1 -I 10 -W weka.classifiers.trees.DecisionStump
+Running Time: 0.07 seconds
+Confusion Matrix:
+
+   a   b   <-- classified as
+ 306  51 |   a = 0
+  41 255 |   b = 1
+  
+Prediction Accuracy: 85.9112 %
+
+
+
+Section B:
+
+1a. Random Forest
+
+Parameters: -P 100 -I 250 -num-slots 1 -K 0 -M 1.0 -V 0.001 -S 1
+Modified parameter: 250 iterations
+Running Time: 0.21 seconds
+Confusion Matrix:
+
+   a   b   <-- classified as
+ 317  40 |   a = 0
+  44 252 |   b = 1
+  
+Prediction Accuracy: 87.1363 %
+
+I modified number of iterations and set it to 250.
+Runtime decreased by 0.11 seconds and prediction accuracy increased by 0.4595 %.
+It was because Random Forest performs better when run for more number of iterations.
+
+1b. Logistic Regression
+
+Parameters: -R 1.0E-10 -M -1 -num-decimal-places 4
+Modified parameter: 1.0E-10 ridge
+Running Time: 0.07 seconds
+Confusion Matrix:
+
+   a   b   <-- classified as
+ 302  55 |   a = 0
+  34 262 |   b = 1
+  
+Prediction Accuracy: 86.3706 %
+
+I modified ridge and set it to 1.0E-10.
+Runtime decreased by 0.09 seconds.
+It was because lower values of the ridge estimator give good generalization and better performance on data.
+
+1c. Multi-layer Perceptron
+
+Parameters: -L 0.05 -M 0.2 -N 500 -V 0 -S 0 -E 20 -H a
+Modified parameter: 0.05 learningRate
+Running Time: 8.26 seconds
+Confusion Matrix:
+
+   a   b   <-- classified as
+ 308  49 |   a = 0
+  49 247 |   b = 1
+  
+Prediction Accuracy: 84.9923 %
+
+I modified learningRate and set it to 0.05.
+Runtime increased by 0.02 seconds but accuracy improved by 1.6845 %.
+It was because learningRate is a weight updated from errors and increasing that will fine tune the model, thus making it work better on the data.
+
+1d. SVM
+
+Parameters: -F 0 -L 0.01 -R 0.001 -E 500 -C 0.001 -S 1
+Modified parameter: 0.001 lambda
+Running Time: 0.06 seconds
+Confusion Matrix:
+
+   a   b   <-- classified as
+ 286  71 |   a = 0
+  19 277 |   b = 1
+  
+Prediction Accuracy: 86.2175 %
+
+I modified lambda and set it to 0.001.
+Runtime reduced by 0.09 seconds but accuracy improved by 0.3063 %.
+It was because lambda is a degree of importance given to miss-classifications and hence decreasing lambda will improve the performance of the model on the data.
+
+1e. AdaBoostM1
+
+Parameters: -P 100 -S 1 -I 50 -W weka.classifiers.trees.DecisionStump
+Modified parameter: 50 numIterations
+Running Time: 0.09 seconds
+Confusion Matrix:
+
+   a   b   <-- classified as
+ 307  50 |   a = 0
+  39 257 |   b = 1
+  
+Prediction Accuracy: 86.3706 %
+
+I modified number of iterations and set it to 50.
+Runtime reduced by 0.09 seconds but accuracy improved by 0.4594 %.
+It was because increasing the number of iterations till AdaBoost converges will help improve the performance of the model on the data.
+
+
+
+2.
+My implementation of Random Forest gave accuracy between 85% and 88% in Q2 compared to Weka's best accuracy of 87.1363 %. The near equal accuracy could be a result of good choice of split_feature and split_value and avoiding overfitting.
+
+
+
+3.
+Among the 5 approaches I used in B.1, I think Logistic Regression gave the best performance. I arrived at this conclusion after considering a combination of factors like the approach’s runtime, overall accuracy, and confusion matrix.
+-	More true positives and true negatives in the confusion matrix than most other approaches
+-	Less false positives and false negatives in the confusion matrix than most other approaches
+-	Second best overall accuracy
+-	Runtime is just 0.07 seconds

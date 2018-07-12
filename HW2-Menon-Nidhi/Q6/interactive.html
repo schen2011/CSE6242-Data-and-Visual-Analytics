@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<head>
+  <title>nmenon34</title>
+	<style>
+
+    #BarChart {
+      height: 500px;
+      width:1000px;
+      margin-top: 20px;
+      padding: 15px;
+      overflow: auto;
+      float:left;
+    }
+
+    #LineChart{    
+      position:absolute;
+      height: 275px;
+      width: 300px;
+      margin-left: 1000px;
+      margin-top:0px;
+      padding: 15px;
+      overflow: auto;
+    }
+
+    div#BarChart body {
+            font-family: "Arial", sans-serif;
+        }
+        
+    div#BarChart .axis {
+            font-family: "Arial", sans-serif;
+            font-size: 18px;
+        }
+        
+    div#BarChart .axis path,
+                 .axis line {
+                    fill: none;
+                    display: none;
+                  }
+        
+     div#BarChart .label {
+            font-family: "Arial", sans-serif;
+            font-size: 15px;
+            fill: #cc00cc;
+            font-weight: bold;
+        }
+
+	  div#LineChart path {
+      stroke: #43a2ca;
+      stroke-width: 2.5;
+      fill: none;
+    }
+
+      
+    div#LineChart .axis text {
+      font-family: sans-serif;
+      font-size: 12px;
+    }
+
+    div#LineChart
+      .axis path,
+      .axis line {
+        fill: none;
+        stroke: black;
+        shape-rendering: crispEdges;
+      }
+
+    h1 {text-align:center; color: red;}
+
+	</style>
+</head>
+
+<body>
+  <h1>Interactive Visualization</h1>
+</body>
+
+	<div id = "BarChart" ></div>
+
+  <div id = "LineChart" ></div>
+  
+<script src="../lib/d3.v3.min.js" charset="utf-8"></script>
+
+<script>
+
+var   data= [{club:'Manchester United',value:{year_2013:3165, year_2014:2810, year_2015:3100, year_2016:3317, year_2017:4583}},
+{club:'Chelsea',value:{year_2013:901, year_2014:868, year_2015:1370, year_2016:1661, year_2017:1845}},
+{club:'Manchester City',value:{year_2013:689, year_2014:863, year_2015:1380, year_2016:1921, year_2017:2083}},
+{club:'Liverpool',value:{year_2013:651, year_2014:704, year_2015:982, year_2016:1548, year_2017:1492}},
+{club:'Arsenal',value:{year_2013:1326, year_2014:1331, year_2015:1310, year_2016:2017, year_2017:1932}}];
+
+data.forEach(function(d){
+      d.club = d.club;
+      d.amount = 0
+      for(i in d.value)
+      {
+        d.amount+=d.value[i]
+      }});
+
+var margin = {top: 20, right: 20, bottom: 20, left: 200},
+    width = 950 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+var svg = d3.select("#BarChart").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    .style("float","left");
+
+var x = d3.scale.linear()
+                .range([width,0])
+                .domain([0, d3.max(data, function(d) { return d.amount; })]);
+
+var y = d3.scale.ordinal()
+                .rangeRoundBands([0,height], .05)
+                .domain(data.map(function(d) { return d.club; }));
+
+//make y axis to show bar names
+var yAxis = d3.svg.axis()
+                  .scale(y)
+                  .tickSize(0)
+                  .orient("left");
+
+var gy = svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+
+var bars = svg.selectAll(".bar")
+              .data(data)
+              .enter()
+              .append("g")
+
+var graph;
+
+//append rects
+bars.append("rect")
+      .style("fill", "#a1d99b")
+      .attr("x", 2)
+      .attr("y", function(d) { return y(d.club)+6; })
+      .attr("width", function(d){ return width - x(d.amount)})
+      .attr("height", 50)
+      .on("mouseover", function(s) {
+
+            s.years = []
+            s.values = []
+
+            years = []
+            values = []
+
+            data.forEach(function(da){
+                
+            if(s.club == da.club)
+            {
+              for(i in da.value)
+              {
+                years.push(i);
+                values.push(da.value[i])
+              }
+            }
+
+            s.years = years;
+            s.values = values;   
+            });
+
+            d3.select(this).style("fill", "#ffeda0");
+        
+            var m = [40, 40, 40, 40];
+            var w = 300 - m[1] - m[3];
+            var h = 250 - m[0] - m[2];
+    
+            var x_data = [2013, 2014, 2015, 2016, 2017]
+
+            var x = d3.scale.linear().domain([0, x_data.length-1]).range([0, w]);
+    
+            var y = d3.scale.linear().domain([423, d3.max(s.values)]).range([h, 0]);
+      
+            var line = d3.svg.line()
+                             .x(function(d,i) { return x(i); })
+                             .y(function(d) { return y(d); })
+
+            graph = d3.select("#LineChart")
+                      .append("svg:svg")
+                      .attr("width", w + m[1] + m[3])
+                      .attr("height", h + m[0] + m[2])
+                      .append("svg:g")
+                      .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+
+            var xAxis = d3.svg.axis().scale(x).ticks(4).orient("bottom")
+                              .tickFormat(function(d) {
+                                return x_data[d];
+                              })
+            // Add the x-axis.
+            graph.append("svg:g")
+                 .attr("class", "x axis")
+                 .attr("transform", "translate(0," + h + ")")
+                 .call(xAxis)
+                 .append("text")
+                 .attr("x",207)
+                 .style("text-anchor","bottom")
+                 .attr("dy", "2.8em")
+                 .text("Year")
+
+            // create left yAxis
+            var yAxisLeft = d3.svg.axis().scale(y).ticks(6).orient("left");
+
+            // Add the y-axis to the left
+            graph.append("svg:g")
+                 .attr("class", "y axis")
+                 .attr("transform", "translate(0,0)")
+                 .call(yAxisLeft)
+                 .append("text")
+                 .attr("y",-10)
+                 .style("text-anchor","top")
+                 .attr("dx", "-2.5em")
+                 .text("Value")
+        
+            graph.append("svg:path").attr("d", line(s.values));
+
+      })
+      .on("mouseout", function() {
+        d3.select(this).style("fill", "#a1d99b")
+        d3.selectAll('#LineChart svg').remove();       
+      })
+      
+var bars = svg.selectAll(".bar")
+            .data(data)
+            .enter()
+
+        bars.append("text")
+            .attr("class", "label")
+            .attr("y", function (d) {
+                return y(d.club) + y.rangeBand() / 2 + 4;
+            })
+            .attr("x", 10)//change amount display position on graph 
+            .text(function (d) {
+                return "$" + d.amount;
+            })
+
+</script>
+</html>

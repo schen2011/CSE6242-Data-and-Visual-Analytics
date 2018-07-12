@@ -1,0 +1,2 @@
+5c)
+Linear Regression Model has better accuracy, probably because it works better than the other 2 for smaller datasets like the one being considered. I added features which decreased RMSE and improved coefficient of determination, thus denoting that they trained the model better because they had greater influence on price.

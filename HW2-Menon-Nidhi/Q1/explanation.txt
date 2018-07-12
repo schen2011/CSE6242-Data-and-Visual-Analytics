@@ -1,0 +1,13 @@
+Q.1a
+Design choices implemented using Excel:
+1. Filtered data for 2012
+2. Pivoted table to avoid repetition of data
+3. Removed gridlines
+4. Grand total highlighted in bold font
+5. Used subtle colors for effective visualization
+6. Missing values set to 0
+7. Text data aligned to left, numeric to right
+
+*****************************************************************************************************************************************************************************************
+Q.1b
+Plotted multiple-measure line charts for crime rates over given years. I chose to plot crimes that fall under 'Part I property crimes' in US and assigned different colors to each, for easier visual interpretation using a legend. Thickness of each line is scaled based on crime rate.

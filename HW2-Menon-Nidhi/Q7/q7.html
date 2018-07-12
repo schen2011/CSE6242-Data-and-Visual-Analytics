@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>nmenon34</title>
+
+<style>
+body {
+  font: 14px Times New Roman;
+  background-color: #ffffd9;
+}
+
+.states {
+  fill: none;
+  stroke: #ffffd9;
+  stroke-linejoin: round;
+}
+
+.d3-tip {
+  line-height: 1.25;
+  padding: 8px;
+  background: rgba(0,104,55, 0.9);
+  color: #f7fcb9;
+  border-radius: 25px;
+}
+
+.legend {
+  font-size: 12px;
+  color: #000;
+}
+
+h1 {text-align:center; color: #081d58;}
+
+</style>
+
+<body>
+  <br><br>
+<p><h1><u>Median Earnings by State</u></h1></p>
+
+<script src="../lib/d3.v3.min.js"></script>
+<script src="../lib/d3.tip.v0.6.3.js"></script>
+<script src="../lib/d3-queue.v3.min.js"></script>
+<script src="../lib/topojson.v1.min.js"></script>
+
+<script>
+width = 975,
+height = 500;
+dataset = [];
+var colors = ["#f7f4f9", "#e7e1ef", "#d4b9da", "#c994c7", "#df65b0", "#e7298a", "#ce1256", "#980043", "#67001f"];
+
+var margin = {top: 10, right: 20, bottom: 2, left: 10};
+
+d3.csv("median_ages.csv", function(error, data){
+  data.forEach(function(d){
+    dataset.push({"id":+d.id,"name":d.name,"median_age":+d.median_age});
+  });
+});
+
+popById = d3.map();
+
+quantize = d3.scale.quantile()
+               .range(colors)
+               .domain([0,10000,15000,18000,21000,24000,27000,30000,33000,35000]);
+               // .domain([0,8,d3.max(popById, function(d){
+               //    return popById.values();
+               // })]);
+
+projection = d3.geo.albersUsa()
+                   .scale(1000)
+                   .translate([width / 2, height / 2]);
+
+path = d3.geo.path()
+             .projection(projection);
+
+tip = d3.tip()
+        .attr('class', 'd3-tip')
+        .offset([-15, -15])
+        .html(function(d) {
+          return obj_for_id(d.id);
+        });
+
+svg = d3.select("body")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .attr("transform", "translate("+margin.left+", "+margin.top+")");
+
+svg.call(tip);
+
+q = d3.queue()
+      .defer(d3.json, "us.json")
+      .defer(d3.json, "median_earnings.json")
+      .defer(d3.csv, "median_ages.csv")
+      .await(read_pop);
+
+function read_pop(error, us, median_earnings) 
+  {d = median_earnings;
+    for (i=0; i<d.length;i++){
+      popById.set(d[i].id, +d[i].median_earnings)
+    }
+    plot(error, us)
+  }
+
+function obj_for_id(id){
+array_select_obj=[];
+abc = [];
+var d = dataset;
+    for (i=0; i<d.length;i++){
+      if(d[i].id==id){
+        array_select_obj.push({"name":d[i].name, "median_age":+d[i].median_age});
+      }
+    }
+    abc = array_select_obj.sort(function(x,y) {
+         return d3.ascending(+x.median_age, +y.median_age);
+    })
+    var new_abc=abc.slice(0,5);
+    
+    // convert array to string
+     var myString = "";
+    var i = 0;
+    while(i<new_abc.length){
+       myString = myString + (new_abc[i].name + " (Age: "+ new_abc[i].median_age+ ")" +"</br>");
+       i++;
+    }
+    return myString;
+}
+
+function plot(error, us) {
+  // console.log("in here");
+  //quantize.domain([10000,15000,18000,21000,24000,27000,30000,33000]);
+
+  //console.log(quantize.domain(d3.extent(popById.values())));
+
+   svg.append("g")
+      .attr("class", "states")
+      .selectAll("path")
+      .data(topojson.feature(us, us.objects.states).features)
+      .enter().append("path")
+      .style("fill", function(d) { return quantize(popById.get(d.id))})
+      //.style("fill", quantize.domain())
+      .attr("d", path)
+      .on("mouseover", tip.show)
+      .on("mouseout", tip.hide);
+
+var legend=svg.selectAll(".legend")
+              //.data([0].concat(quantize.domain()), function(d){return d;});
+              // .data(quantize.domain());
+              .data(quantize.quantiles(), function(d){return d;});
+
+        legend.enter()
+              .append("g")
+              .attr("class","legend");
+        legend.append("rect")
+              .attr("x", width-40)
+              .attr("y", function(d,i){
+                return height/3+i*32;
+              })
+              .attr("width", 32)
+              .attr("height", 32)
+              .style("fill", function(d,i){
+                return colors[i];
+              });
+              
+        legend.append("text")
+              .text(function(d){
+                console.log(Math.round(d));
+               return "$"+Math.round(d)
+              })
+              .attr("x",width-7)
+              .attr("y", function(d,i){
+                return height/2.7+i*33;
+              });
+   }           
+
+</script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<meta charset="utf-8"></meta>
+	<title>nmenon34</title>
+	<style type="text/css">
+
+.node rect {
+  fill-opacity: 1;
+  shape-rendering: crispEdges;
+}
+
+.link {
+  fill: none;
+  stroke: #000;
+  stroke-opacity: 0.25;
+}
+
+.link:hover {
+  stroke-opacity: 0.4;
+}
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 18px;
+}
+
+.node text{
+	pointer-events: none;
+	font-family: "Arial", Sans-serif;
+}
+
+</style>
+<body>
+
+<!-- //References:
+//https://bl.ocks.org/austinczarnecki/cc6371af0b726e61b9ab
+//http://bl.ocks.org/d3noob/5028304
+//http://bl.ocks.org/d3noob/5028304 -->
+
+<script type="text/javascript" src="../lib/d3.v3.min.js"></script>
+<script type="text/javascript" src="../lib/sankey.js"></script>
+<script type="text/javascript" src="../lib/d3-queue.v3.min.js"></script>
+<script type="text/javascript" src="../lib/d3.tip.v0.6.3.js"></script>
+
+<script type="text/javascript">
+
+	
+var units = "Widgets";
+var margin = {top: 30, right: 40, bottom: 30, left: 40},
+    width = 1000,
+    height = 1000;
+    color = d3.scale.category20();
+
+////////////////////////////////////////////////////////////////
+
+/* Initialize tooltip */
+var tip = d3.tip()
+  .attr('class', 'd3-tip')
+  .offset([-10,0])
+  .html(function(d) {
+    return  d.source.name + " - "  + d.target.name+ " - "+d.value +" points";
+  });
+////////////////////////////////////////////////////////////////
+
+// append the svg canvas to the page
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// Set the sankey diagram properties
+svg.call(tip);
+ var sankey = d3.sankey()
+    			.nodeWidth(30)
+    			.nodePadding(15)
+    			.size([width, height]);
+
+var div = d3.select("body").append("div")	
+    		.attr("class", "tooltip")				
+    		.style("opacity", 1);
+
+var path = sankey.link();
+graph = {"nodes" : [], "links" : []};
+
+//input data
+
+			d3.queue()
+			  .defer(d3.csv, "races.csv")
+			  .defer(d3.csv, "teams.csv")
+			  .await(ready);
+
+			function ready(error, races, teams){
+				if(error) throw error;
+				// build the graph
+				graph = {"nodes": [], "links": []};
+
+				races.forEach(function(d){
+					graph.nodes.push({"name":d.race});
+					graph.nodes.push({"name":d.driver});
+					graph.links.push({"source": d.race,
+									  "target": d.driver,
+									  "value":+d.points});
+				});
+				
+				teams.forEach(function(d){
+					graph.nodes.push({"name": d.driver});
+					graph.nodes.push({"name":d.team});
+					graph.links.push({"source":d.driver,
+									  "target":d.team,
+									  "value": +d.points});
+				});
+
+				// return only the distinct / unique nodes
+				graph.nodes = d3.keys(d3.nest()
+					.key(function(d){
+						return d.name;
+					})
+					.map(graph.nodes));
+				
+
+				// loop through each link replacing the text with its index from node
+				graph.links.forEach(function(d, i){
+					//console.log(graph.nodes.indexOf(graph.links[i].source));
+					graph.links[i].source = graph.nodes.indexOf(graph.links[i].source);
+					graph.links[i].target = graph.nodes.indexOf(graph.links[i].target);
+				});
+
+				//console.log(graph.links);
+				graph.nodes.forEach(function(d, i){
+					graph.nodes[i] = {"name": d};
+				});
+
+				sankey.nodes(graph.nodes).links(graph.links).layout(30);
+
+				// add links
+				var link = svg.append("g").selectAll(".link")
+							  .data(graph.links)
+				  			  .enter().append("path")
+							  .attr("class", "link")
+							  .attr("d", path)
+							  .style("stroke-width", function(d){
+								return Math.max(1, d.dy);
+							  })
+
+							  .on('mouseover', tip.show)
+      						  .on('mouseout', tip.hide);
+				
+				// add nodes
+				var node = svg.append("g")
+							  .selectAll(".node")
+							  .data(graph.nodes)
+				  			  .enter()
+				  			  .append("g")
+				  			  .attr("class", "node")
+				  			  .attr("transform", function(d){
+				  				return "translate("+d.x+", "+d.y+")";
+				  			  });
+
+				//  add rect for nodes
+				node.append("rect")
+				  		.attr("height", function(d){ return d.dy;})
+				  		.attr("width", sankey.nodeWidth())
+				  		.style("fill", function(d) { return d.color = color(d.name.replace(/ .*/, "")); })
+      					.style("stroke", function(d) { return d3.rgb(d.color).darker(2); })
+				  		.append("title")
+				  		.text(function(d){
+				  			return d.name;
+				  		});
+
+				node.append("text")
+				  			.attr("x", -6)
+				  			.attr("y", function(d){return d.dy/2;})
+				  			.attr("dy", ".35em")
+				  			.attr("text-anchor", "end")
+				  			.attr("transform", null)
+				  			.style("font-size", "10px")
+				  			.style("font-weight", "bold")
+				  			.text(function(d){
+				  				return d.name;
+				  			})
+				  			.filter(function(d){
+					  			return d.x < width /2;
+				  			})
+				  			.attr("x", 8+sankey.nodeWidth())
+				  			.style("font-size", "10px")
+				  			.style("font-weight", "bold")
+				  			.attr("text-anchor", "start");
+
+			};	
+</script>
+
+</body>
+</html>

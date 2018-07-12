@@ -1,0 +1,4 @@
+Layout used: 'Fruchterman Reingold'
+Parameters: area=10000.0, gravity=10.0
+Font family and size: Arial Bold Italic, 40
+Others: Background color, colors for edges and nodes, and their sizes were set. Label size was chosen to be proportional to node size.

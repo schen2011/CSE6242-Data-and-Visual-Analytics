@@ -1,0 +1,8 @@
+Average node degree: 1.049
+Node degree is the number of edges on a node, independent of the in or out relation. Average node degree is the average of node degrees of all nodes in a graph.
+
+Diameter of the graph: 5
+It is the maximum graph distance between two nodes in the generated network.
+
+Average path length: 2.953710927341759
+Graph distance can be measured between pair of nodes with 1 being the shortest and diameter being the longest. Average path length is the average graph distance between all pairs of nodes in a graph.

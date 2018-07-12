@@ -1,0 +1,6 @@
+Q.3A 2)
+Visually, Plasma Glucose vs. Insulin seems better at separating the positive and negative classes because it is less cluttered and most data points are distinctly identifiable. This also makes it easy for the classifier to interpret the pattern in data over a varying scale of the parameters.
+
+***********************************************************************************************************************************************************************************
+Q.3C.
+Square root scales are applied to counted data with large values to be mapped to a smaller domain. It can be applied to zero values. Log scale is appropriate for measured variables with some outliers. It makes an exponential relation linear but can’t be applied to zero or negative values.

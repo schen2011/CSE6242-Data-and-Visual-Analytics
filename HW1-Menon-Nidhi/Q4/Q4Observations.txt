@@ -1,0 +1,19 @@
+c(i) The column “propertyzoningdesc” was cleaned using Text Facet with 'key collision' method and 'ngram-fingerprint' keying function. The resultant column has 909 unique values.
+
+c(ii) The following GREL expression and the Transform feature was used to represent dates in the required format:
+	value.toDate('yyyy-MM-dd').toString('EEEE, MMMM dd, yyyy')
+
+c(iii) The column 'propertyzoningdesc' has only nominal data and the column 'buildingqualitytypeid' has only ordinal data.
+(The column 'propertyzoningdesc' has values that are codes used to represent the distinct zones that the properties are being classified into and hence, it can be considered as having nominal data. The column 'buildingqualitytypeid' has id numbers that represent values for building-quality logically ordered from 'lowest' to 'highest'. The building-quality is a natural ordering that can be rated but the difference in the qualities is something that cannot be stated with certainty. Hence, the column can be considered as having ordinal data even though it has numeric values.)
+
+c(iv) A new column, 'bedroomflag' was created based on the column 'bedroomcnt' using the following GREL expression:
+	if(value.toNumber()>3,"true","")
+
+c(v) The following GREL expression and the Transform feature was used to remove the '*' in the string from the column 'propertyzoningdesc':
+	chomp(value.toString(),"*")
+
+c(vi) I have implemented the following GREL expression and the Transform feature to additionally clean the data:
+	if(value.toNumber()>=10,substring("20" + value.toNumber(), 0,4),substring("200" + value.toNumber(), 0,4))
+
+Comment :
+The column 'taxdelinquencyyear' had values in YY format or were blank. Other columns represented years as YYYY. Hence values as YY would seem confusing to the user. I appended "20" to generate values from 2010 and "200" for values till 2009, thus making the data cleaner.

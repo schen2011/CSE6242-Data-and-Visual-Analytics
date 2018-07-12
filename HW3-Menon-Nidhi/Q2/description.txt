@@ -1,0 +1,4 @@
+1. Input being a tsv file, split at tab ("\t") to generate two dataframes- one each for source and target. For source, weight is considered as outweight and for target, the same may be considered as inweight. (lines 20 & 21)
+2. Filter the dataframes to remove the edge weights that are lesser than 5. Then group them by either source or target and sum up the corresponding inweights and/or outweights. (lines 23 & 24)
+3. Perform full outer join on 'incoming' and 'outgoing' to consider nodes without either incoming or outgoing edges. Using coalesce returns either the weight of edge (if present) or NULL. NULL values are then changed to 0 using na.fill(0). (line 26)
+4. The result is formatted as a tsv i.e. tab-separated-file, and saved to output file. (line 31)

@@ -1,0 +1,1 @@
+Radius of each node in the graph is scaled on the basis of node degree, using Math.sqrt(d.weight)*5 wherein d.weight returns degree of node. The square root of degree has been scaled using a constant value for better visualization.

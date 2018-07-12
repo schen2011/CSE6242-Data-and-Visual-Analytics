@@ -1,0 +1,44 @@
+5a) Experiment as in tutorial with split value = 0.75
+Mean Absolute Error				:	1656.147651
+Root Mean Squared Error			:	2456.983209
+Relative Absolute Error			:	0.276606
+Relative Squared Error			:	0.089608
+Coefficient of determination	:	0.910392
+
+5b) Split value = 0.9
+Mean Absolute Error				:	1265.001752
+Root Mean Squared Error			:	1783.328763
+Relative Absolute Error			:	0.253181
+Relative Squared Error			:	0.067781
+Coefficient of determination	:	0.932219
+
+5c) Split value = 0.75 (Experimenting with different models and features)
+1] Poisson Regression Model
+Negative Log Likelihood			:	426.351322
+Mean Absolute Error				:	1416.157168
+Root Mean Squared Error			:	2041.451874
+Relative Absolute Error			:	0.236523
+Relative Squared Error			:	0.061862
+Coefficient of determination	:	0.938138
+
+2] Boosted DT Regression Model
+Mean Absolute Error				:	1472.608836
+Root Mean Squared Error			:	2323.369933
+Relative Absolute Error			:	0.245952
+Relative Squared Error			:	0.080127
+Coefficient of determination	:	0.919873
+
+3] Linear Regression Model
+a> With original set of 8 features
+Mean Absolute Error				:	1656.147651
+Root Mean Squared Error			:	2456.983209
+Relative Absolute Error			:	0.276606
+Relative Squared Error			:	0.089608
+Coefficient of determination	:	0.910392
+
+b> By removing 1 feature and adding 4 different features
+Mean Absolute Error				:	1734.235459
+Root Mean Squared Error			:	2445.899234
+Relative Absolute Error			:	0.289648
+Relative Squared Error			:	0.088802
+Coefficient of determination	:	0.911198
